@@ -267,7 +267,7 @@ def generate_report(final_docs, user_input, llm):
         described in the sources (2–3 sentences).
 
     LENGTH:
-    Maximum 500 words.
+    Finish the report in less than 500 words.
 
     CONTEXT:
     {context}
