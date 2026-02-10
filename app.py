@@ -14,7 +14,7 @@ st.set_page_config(
 
 # Initialize LLM
 @st.cache_resource
-def get_llm():
+def get_llm(api_key):
     """Initialize the LLM with API key from secrets"""
     api_key = st.secrets.get("GROQ_API_KEY", os.getenv("GROQ_API_KEY"))
     if not api_key:
@@ -179,7 +179,7 @@ def filter_documents(raw_docs, user_input, llm):
                         final_docs.append(doc)
 
     # Cap at 5 sources
-    final_docs = final_docs[:5]
+    return final_docs[:5]
 
     if not final_docs:
         print("\n[!] DATA GAP DETECTED")
