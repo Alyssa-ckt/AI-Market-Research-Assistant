@@ -16,11 +16,12 @@ Generate comprehensive industry reports powered by AI and Wikipedia data.
 - Python 3.8+
 - Groq API key (get one free at [console.groq.com](https://console.groq.com))
 
-## Local Installation
+## Deployment
+### Local Installation
 
 1. Clone this repository:
 ```bash
-git clone <your-repo-url>
+git clone 
 cd market-research-assistant
 ```
 
@@ -29,18 +30,12 @@ cd market-research-assistant
 pip install -r requirements.txt
 ```
 
-3. Create `.streamlit/secrets.toml` and add your API key:
-```toml
-GROQ_API_KEY = "your-groq-api-key-here"
-```
-
-4. Run the app:
+3. Run the app:
 ```bash
 streamlit run app.py
 ```
 
-## Deployment
-
+4. Enter your Groq API key in the sidebar when the app opens
 ### Streamlit Community Cloud
 
 1. Push the code to GitHub
@@ -84,8 +79,9 @@ streamlit run app.py
 
 ## Troubleshooting
 
-**"GROQ_API_KEY not found"**
-- Make sure you've added your API key to `.streamlit/secrets.toml` (local) or your deployment platform's secrets/environment variables
+**"Invalid API key" or authentication errors**
+- Make sure you copied the entire API key correctly
+- Check that your API key is active in the Groq console
 
 **"No Wikipedia articles found"**
 - Try being more specific with your industry name
