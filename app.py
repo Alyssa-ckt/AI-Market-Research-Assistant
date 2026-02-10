@@ -286,6 +286,22 @@ st.markdown("Hi, I am here to help with your industry research, what would you l
 
 # Sidebar
 with st.sidebar:
+    st.header("⚙️ Configuration")
+    
+    # API Key Input
+    api_key = st.text_input(
+        "Groq API Key",
+        type="password",
+        help="Get your free API key from https://console.groq.com"
+    )
+    
+    if api_key:
+        st.success("✅ API Key provided")
+    else:
+        st.warning("⚠️ Please enter your Groq API key to use the app")
+    
+    st.markdown("---")
+    
     st.header("About")
     st.markdown("""
     This tool generates market research reports by:
@@ -316,11 +332,16 @@ user_input = st.text_input(
 )
 
 if st.button("Generate Report", type="primary"):
+    if not api_key:
+        st.error("⚠️ Please enter your Groq API key in the sidebar first!")
+        st.info("Get a free API key at https://console.groq.com")
+        st.stop()
+        
     if not user_input or len(user_input) < 3:
         st.error("Please enter a valid industry name (at least 3 characters)")
     else:
         try:
-            llm = get_llm()
+            llm = get_llm(api_key)
             
             # Progress tracking
             progress_bar = st.progress(0)
