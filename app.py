@@ -269,6 +269,13 @@ def generate_report(final_docs, user_input, llm):
     - Focus on industry mechanisms and economic structure.
     - Prioritise financial scale, capital intensity, and economic impact when available.
 
+    FORMATTING RULES (CRITICAL):
+    - Use ## for each section heading (e.g. ## 1. Industry Overview & Market Value)
+    - Leave a blank line between the heading and the paragraph text
+    - For bullet point lists, put each bullet on its own line with a blank line between bullets
+    - For the SWOT section, use bold labels: **Strengths**, **Weaknesses**, **Opportunities**, **Threats**
+    - Do NOT run section headings and content together on the same line
+
     REPORT STRUCTURE:
 
  1. Industry Overview & Market Value
@@ -501,7 +508,8 @@ if st.button("Generate Report", type="primary"):
                     if s['Financial Figures'] == "None":
                         st.caption("No explicit financial figures found in this source.")
                     else:
-                        st.markdown(s['Financial Figures'])
+                        formatted = s['Financial Figures'].replace('• ', '\n\n• ')
+                        st.markdown(formatted)
             
             # Report section
             st.subheader(f"📊 Industry Report: {user_input.upper()}")
