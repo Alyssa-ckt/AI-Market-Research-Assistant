@@ -478,7 +478,7 @@ if st.button("Generate Report", type="primary"):
             status_text.text("✍️ Generating report...")
             progress_bar.progress(90)
             
-           report_content, sources_info, financial_text = generate_report(final_docs, user_input, llm)
+            report_content, sources_info, financial_text = generate_report(final_docs, user_input, llm)
             
             progress_bar.progress(100)
             status_text.text("✅ Report generated successfully!")
