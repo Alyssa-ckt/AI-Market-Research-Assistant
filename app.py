@@ -456,7 +456,11 @@ if st.button("Generate Report", type="primary"):
             if not raw_docs:
                 st.warning("No Wikipedia articles found. Try a different industry name.")
                 st.stop()
-            
+
+            with st.expander(f"📄 Raw Articles Retrieved ({len(raw_docs)} total)"):
+                for i, doc in enumerate(raw_docs, 1):
+                    st.write(f"{i}. {doc.metadata['title']}")
+
             # Step 4: Filter documents
             status_text.text("🔎 Filtering relevant sources...")
             progress_bar.progress(70)
