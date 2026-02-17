@@ -69,10 +69,21 @@ def validate_industry(user_input, llm):
     classification = classification_raw.split()[0].upper()
     
     if classification == "VALID":
-        return True, ""
+        return True, "", []
     else:
-        reason = classification_raw.replace("INVALID", "").strip()
-        return False, reason
+        # Parse response for reason and suggestions
+        lines = classification_raw.split('\n')
+        reason = ""
+        suggestions = []
+        
+        for line in lines:
+            if line.startswith("INVALID"):
+                reason = line.replace("INVALID", "").replace("-", "").strip()
+            elif line.startswith("SUGGESTIONS:"):
+                suggestions_text = line.replace("SUGGESTIONS:", "").strip()
+                suggestions = [s.strip() for s in suggestions_text.split(",")]
+        
+        return False, reason, suggestions
 
 def generate_queries(user_input, llm):
     """Generate multiple search queries for the industry"""
@@ -457,12 +468,16 @@ if st.button("Generate Report", type="primary"):
             status_text.text("🔍 Validating industry...")
             progress_bar.progress(10)
             
-            is_valid, reason = validate_industry(user_input, llm)
-            
+            is_valid, reason, suggestions = validate_industry(user_input, llm)
+
             if not is_valid:
                 st.error(f"'{user_input}' does not appear to be a valid industry.")
                 if reason:
                     st.warning(f"Reason: {reason}")
+                if suggestions:
+                    st.info("💡 **Did you mean one of these?**")
+                    for s in suggestions:
+                        st.write(f"• {s}")
                 st.stop()
             
             # Step 2: Generate queries
