@@ -176,12 +176,14 @@ def filter_documents(raw_docs, user_input, llm):
 
         # Search each broad query and add results
         for q in broad_queries:
-            docs = retriever.invoke(q)
+            try:
+                docs = retriever.invoke(q)
+            except Exception:
+                continue  # Skip failed queries
             for doc in docs:
                 title = doc.metadata["title"]
-                # Add only if it's new and contains the industry keyword
                 if title not in [d.metadata["title"] for d in final_docs]:
-                    if user_input.lower() in title.lower():  # strict relevance
+                    if user_input.lower() in title.lower():
                         final_docs.append(doc)
                         
     final_docs = final_docs[:5]
