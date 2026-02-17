@@ -246,7 +246,11 @@ def generate_report(final_docs, user_input, llm):
         "context": context_text
     })
 
-    financial_text = financial_output.content.strip()
+    # Combined financial summary for the report prompt
+    financial_text = "\n\n".join([
+        f"SOURCE {s['#']} — {s['Title']}:\n{s['Financial Figures']}"
+        for s in sources_info
+    ])
     
     report_prompt = ChatPromptTemplate.from_template("""
     ROLE:
@@ -492,12 +496,16 @@ if st.button("Generate Report", type="primary"):
             # Display results
             st.success("Report generated successfully!")
             
-            # Sources section
-            st.subheader("📚 Verified Sources")
-            st.dataframe(sources_info, use_container_width=True, hide_index=True)
-
-            st.subheader("Financial Figures Extracted")
-            st.dataframe(financial_text, use_container_width=True, hide_index=True)
+            # Sources + Financial figures combined
+            st.subheader("📚 Verified Sources & Financial Figures")
+            for s in sources_info:
+                with st.expander(f"SOURCE {s['#']}: {s['Title']}"):
+                    st.markdown(f"🔗 [{s['URL']}]({s['URL']})")
+                    st.markdown("**💰 Financial Figures:**")
+                    if s['Financial Figures'] == "None":
+                        st.caption("No explicit financial figures found in this source.")
+                    else:
+                        st.markdown(s['Financial Figures'])
             
             # Report section
             st.subheader(f"📊 Industry Report: {user_input.upper()}")
