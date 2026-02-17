@@ -209,6 +209,47 @@ def generate_report(final_docs, user_input, llm):
             f"URL: {url}\n"
             f"CONTENT:\n{doc.page_content[:1500]}\n\n"
         )
+
+    financial_scan_prompt = ChatPromptTemplate.from_template("""
+    You are a financial data extractor.
+
+    TASK:
+    Scan the CONTEXT below and extract ALL explicit financial or market-scale figures.
+
+    Include:
+    - Market size (global or regional)
+    - Revenue figures
+    - Market valuation
+    - Growth rates (CAGR, annual growth)
+    - Investment amounts
+    - Market capitalization (if industry-relevant)
+    - Market spending
+
+    STRICT RULES:
+    - Extract ONLY figures explicitly stated in the CONTEXT.
+    - Do NOT calculate, estimate, or infer.
+    - For each figure, include the citation in this format:
+      [SOURCE X](URL)
+    - If no financial figures are found, return:
+      "No explicit financial figures found in sources."
+
+    FORMAT:
+    Bullet list.
+
+    CONTEXT:
+    {context}
+    """)
+
+    financial_chain = financial_scan_prompt | llm
+
+    financial_output = financial_chain.invoke({
+        "context": context_text
+    })
+
+    financial_text = financial_output.content.strip()
+
+    print("\n--------------- FINANCIAL FIGURES DETECTED ---------------")
+    print(financial_text)
     
     report_prompt = ChatPromptTemplate.from_template("""
     ROLE:
@@ -216,71 +257,83 @@ def generate_report(final_docs, user_input, llm):
 
     OBJECTIVE:
     Produce a concise, decision-oriented industry briefing that helps a corporate analyst
-    understand the structure, economics, risks, and strategic outlook of the {user_input} industry.
+    understand the structure, economics, risks, and strategic outlook of the {industry}.
 
     STRICT RULES:
     - Use ONLY information explicitly contained in the CONTEXT below.
     - Every factual statement MUST end with at least one clickable citation in this format: [SOURCE X](URL).
-    - Do NOT include assumptions, estimates, or forward-looking claims unless directly supported by the sources.
+    - Do NOT include assumptions, extrapolations, or forward-looking estimates unless directly supported by the sources.
+    - Do NOT generalize about market size if exact figures are available.
     - Avoid generic business statements that could apply to most industries.
-    - If a topic is not covered in the sources, explicitly state: "Not covered in sources."
+    - You SHOULD incorporate the financial figures listed in FINANCIAL FIGURES only if appropriate and accurately.
 
     WRITING STYLE:
     - Professional, neutral, and analytical.
-    - Focus on industry mechanisms, not definitions.
-    - Prioritize insights that matter for corporate strategy and risk assessment.
+    - Focus on industry mechanisms and economic structure.
+    - Prioritise financial scale, capital intensity, and economic impact when available.
 
     REPORT STRUCTURE:
 
-    1. Industry Overview  
-        Briefly describe what the industry does, its core economic function, and why it matters
-        in the broader economy (2–3 sentences).
+ 1. Industry Overview & Market Value
+      - Briefly describe what the industry does and its core economic function.
+      If the sources contain any:
+      - Market size figures
+      - Revenue numbers
+      - Spending levels
+      - Growth rates
+      - CAGR
+      - Year-over-year changes
 
-    2. Market Structure & Value Chain  
-        Explain how value is created and captured in the industry.
-        Identify key participants (e.g. producers, intermediaries, regulators, customers)
-        and how they interact.
+      You MUST explicitly report them with exact figures and citations.
+      If no numerical figures are present in the sources, explicitly state:
+      "No numerical market size data provided in sources."
 
-    3. Industry Scale & Geographic Footprint  
-        Describe the industry’s global or regional scale, major operating regions,
-        and any notable geographic concentration patterns.
+    2. Market Structure & Value Chain
+      - Explain how value is created and captured.
+      - Identify key participants and economic roles.
 
-    4. Competitive Landscape  
-        Identify major players and explain how competition is structured
-        (e.g. fragmentation, concentration, role of incumbents vs new entrants).
+    3. Industry Scale & Geographic Footprint
+      - Describe major producing regions, revenue concentration, or geographic dominance.
+      - Include regional financial figures if present.
 
-    5. Key Industry Drivers  
-        List 3–4 concrete drivers that influence industry performance.
-        Drivers should reflect structural, regulatory, technological, or demand-side forces
-        specific to the {user_input} industry.
+    4. Competitive Landscape
+      - Identify major players.
+      - Describe concentration levels and economic power structure.
 
-    6. Risks, Constraints & Regulatory Barriers  
-        Describe the most significant risks and constraints facing the industry,
-        including regulatory requirements, cost structures, operational risks,
-        or external pressures.
+    5. Key Industry Drivers
+      - List 3–4 concrete drivers that influence industry performance.
+      - Drivers should reflect structural, regulatory, technological, or demand-side forces 
+        specific to the {industry}.
+
+    6. Risks, Constraints & Regulatory Barriers
+      - Identify capital requirements, cost structure, supply constraints, regulatory barriers, or systemic risks.
 
     7. SWOT Analysis
-        Provide an industry-specific SWOT summary:
-        - Strengths: Structural or economic advantages unique to the industry
-        - Weaknesses: Structural limitations or inefficiencies
-        - Opportunities: Changes or trends that could materially improve industry performance
-        - Threats: External or internal forces that could materially harm the industry  
-        Each point must be grounded in the provided sources and avoid generic statements.
+      Provide an industry-specific SWOT summary:
+      - Strengths: Structural or economic advantages unique to the industry
+      - Weaknesses: Structural limitations or inefficiencies
+      - Opportunities: Changes or trends that could materially improve industry performance
+      - Threats: External or internal forces that could materially harm the industry
+      Each point must be grounded in the provided sources and avoid generic statements.
 
-    8. Industry Outlook  
-        Summarize how the industry is expected to evolve based on current trends
+    8. Industry Outlook
+      - Summarize how the industry is expected to evolve based on current trends
         described in the sources (2–3 sentences).
 
     LENGTH:
-    Finish the report in less than 500 words.
+    Maximum 500 words.
 
     CONTEXT:
     {context}
+
+    FINANCIAL FIGURES:
+    {financials}
     """)
     
     report = (report_prompt | llm).invoke({
         "context": context_text,
-        "user_input": user_input
+        "industry": user_input,
+        "financials": financial_text
         })
     
     return report.content, sources_info
@@ -293,17 +346,40 @@ st.markdown("Hi, I am here to help with your industry research, what would you l
 with st.sidebar:
     st.header("⚙️ Configuration")
     
+    # Provider Selection
+    provider = st.selectbox(
+        "AI Provider",
+        ["Groq", "OpenAI"],
+        help="Choose your AI provider"
+    )
+    
+    # Model Selection based on provider
+    if provider == "Groq":
+        model = st.selectbox(
+            "Model",
+            ["llama-3.3-70b-versatile"],
+            help="Select Groq model"
+        )
+        api_url = "https://console.groq.com"
+    else:  # OpenAI
+        model = st.selectbox(
+            "Model",
+            ["gpt-4o"],
+            help="Select OpenAI model"
+        )
+        api_url = "https://platform.openai.com/api-keys"
+    
     # API Key Input
     api_key = st.text_input(
-        "Groq API Key",
+        f"{provider} API Key",
         type="password",
-        help="Get your free API key from https://console.groq.com"
+        help=f"Get your API key from {api_url}"
     )
     
     if api_key:
         st.success("✅ API Key provided")
     else:
-        st.warning("⚠️ Please enter your Groq API key to use the app")
+        st.warning(f"⚠️ Please enter your {provider} API key")
     
     st.markdown("---")
     
