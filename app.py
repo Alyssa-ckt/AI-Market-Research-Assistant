@@ -39,13 +39,12 @@ def validate_industry(user_input, llm):
     industry_check_prompt = f"""
     You are an input validator.
     TASK:
-    Determine whether the "{user_input}" refers to a BUSINESS INDUSTRY, SECTOR, or MARKET.
+    Determine whether the "{user_input}" refers to an INDUSTRY, SECTOR, or MARKET.
     
     If the input is an industry:
     VALID
     
     If the input is too broad or vague:
-    INVALID - [one sentence explanation]
     SUGGESTIONS: [3-5 specific industry alternatives the user might mean, comma-separated]
     
     If the input is not an industry at all:
