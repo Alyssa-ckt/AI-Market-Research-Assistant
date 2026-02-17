@@ -2,6 +2,8 @@ import streamlit as st
 from langchain_community.retrievers import WikipediaRetriever
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
+import re
 import re
 import os
 
@@ -14,20 +16,24 @@ st.set_page_config(
 
 # Initialize LLM
 @st.cache_resource
-def get_llm(api_key):
-    """Initialize the LLM with API key from secrets"""
-    api_key = st.secrets.get("GROQ_API_KEY", os.getenv("GROQ_API_KEY"))
-    if not api_key:
-        st.error("⚠️ GROQ_API_KEY not found. Please add it to your secrets.")
-        st.stop()
-    
-    return ChatGroq(
-        model_name="llama-3.3-70b-versatile",
-        temperature=0.5,
-        max_tokens=1200,
-        max_retries=2,
-        api_key=api_key
-    )
+def get_llm(api_key, provider, model):
+    """Initialize the LLM with API key and provider"""
+    if provider == "Groq":
+        return ChatGroq(
+            model_name=model,
+            temperature=0.2,
+            max_tokens=1200,
+            max_retries=2,
+            api_key=api_key
+        )
+    else:  # OpenAI
+        return ChatOpenAI(
+            model=model,
+            temperature=0.2,
+            max_tokens=3000,
+            max_retries=2,
+            api_key=api_key
+        )
 
 def validate_industry(user_input, llm):
     """Validate if the input is a valid industry"""
@@ -54,7 +60,7 @@ Then give a one sentence reason if it is INVALID
 def generate_queries(user_input, llm):
     """Generate multiple search queries for the industry"""
     setup_prompt = f"""
-    You are a research query planner for a market research assistant.
+   You are a research query planner for a market research assistant.
 
     INDUSTRY:
     "{user_input}"
@@ -99,7 +105,7 @@ def generate_queries(user_input, llm):
 
 def retrieve_documents(queries):
     """Retrieve documents from Wikipedia"""
-    retriever = WikipediaRetriever(load_max_docs=17, lang="en")
+    retriever = WikipediaRetriever(load_max_docs=20, lang="en")
     
     all_docs = []
     for q in queries:
@@ -111,7 +117,6 @@ def retrieve_documents(queries):
 
 def filter_documents(raw_docs, user_input, llm):
     """Filter and select the most relevant documents"""
-    retriever = WikipediaRetriever(load_max_docs=10, lang="en")
     if not raw_docs:
         return []
     
