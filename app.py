@@ -491,6 +491,9 @@ if st.button("Generate Report", type="primary"):
             # Sources section
             st.subheader("📚 Verified Sources")
             st.dataframe(sources_info, use_container_width=True, hide_index=True)
+
+            st.subheader("Financial Figures Extracted")
+            st.dataframe(financial_text, use_container_width=True, hide_index=True)
             
             # Report section
             st.subheader(f"📊 Industry Report: {user_input.upper()}")
