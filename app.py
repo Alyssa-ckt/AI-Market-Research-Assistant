@@ -41,7 +41,7 @@ def validate_industry(user_input, llm):
     TASK:
     Determine whether the "{user_input}" refers to a BUSINESS INDUSTRY, SECTOR, or MARKET.
     
-    If the input is specific enough:
+    If the input is an industry:
     VALID
     
     If the input is too broad or vague:
@@ -50,19 +50,6 @@ def validate_industry(user_input, llm):
     
     If the input is not an industry at all:
     INVALID - [one sentence explanation]
-    
-    EXAMPLES:
-    
-    Input: "coffee"
-    INVALID - Too broad; could refer to multiple industries
-    SUGGESTIONS: Coffee roasting industry, Coffee retail industry, Coffee plantation industry, Instant coffee manufacturing, Specialty coffee sector
-    
-    Input: "renewable energy"
-    VALID
-    
-    Input: "pizza"
-    INVALID - Too broad; could refer to multiple industries
-    SUGGESTIONS: Pizza restaurant industry, Frozen pizza manufacturing, Pizza delivery services, Quick-service pizza chains
     """
     
     classification_raw = llm.invoke(industry_check_prompt).content.strip()
