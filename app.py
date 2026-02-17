@@ -230,6 +230,14 @@ def generate_report(final_docs, user_input, llm):
             "Financial Figures": per_source_financials
         })
 
+        context_text += (
+            f"[SOURCE {i}]\n"
+            f"TITLE: {title}\n"
+            f"URL: {url}\n"
+            f"CONTENT:\n{doc.page_content[:1500]}\n\n"
+        )
+
+
     # Combined financial summary for the report prompt
     financial_text = "\n\n".join([
         f"SOURCE {s['#']} — {s['Title']}:\n{s['Financial Figures']}"
