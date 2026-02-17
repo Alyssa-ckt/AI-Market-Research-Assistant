@@ -239,7 +239,7 @@ def generate_report(final_docs, user_input, llm):
         - If none found, return exactly: "None"
         
         SOURCE CONTENT:
-        {doc.page_content[:1500]}
+        {doc.page_content[:4000]}
         """
         try:
             per_source_financials = llm.invoke(per_source_prompt).content.strip()
@@ -257,7 +257,7 @@ def generate_report(final_docs, user_input, llm):
             f"[SOURCE {i}]\n"
             f"TITLE: {title}\n"
             f"URL: {url}\n"
-            f"CONTENT:\n{doc.page_content[:1500]}\n\n"
+            f"CONTENT:\n{doc.page_content[:4000]}\n\n"
         )
 
 
