@@ -133,7 +133,6 @@ def filter_documents(raw_docs, user_input, llm):
   From the list below, select only 5 Wikipedia article titles that:
   - Are relevant and describe the "{user_input}" industry as a whole
   - Are useful for business or market analysis
-  - NOT country-specific, company-specific, or historical-only
 
   RETURN FORMAT:
   - Return ONLY the exact titles, separated by commas.
