@@ -4,7 +4,6 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
 import re
-import re
 import os
 
 # Page configuration
@@ -119,7 +118,9 @@ def filter_documents(raw_docs, user_input, llm):
     """Filter and select the most relevant documents"""
     if not raw_docs:
         return []
-    
+        
+    retriever = WikipediaRetriever(load_max_docs=20, lang="en")
+
     titles_list = [doc.metadata["title"] for doc in raw_docs]
     
     bouncer_prompt = f"""
@@ -184,13 +185,15 @@ def filter_documents(raw_docs, user_input, llm):
                         final_docs.append(doc)
 
     # Cap at 5 sources
-    return final_docs[:5]
 
     if not final_docs:
         print("\n[!] DATA GAP DETECTED")
         print(f"I couldn't find specific business market data for '{user_input}' on Wikipedia.")
         print("Please provide more details (e.g., 'Automotive manufacturing' instead of just 'Cars') or try a different sector.")
         return # This stops the function immediately so no report is generated
+
+    return final_docs[:5]
+
 
 
 def generate_report(final_docs, user_input, llm):
