@@ -41,14 +41,21 @@ def validate_industry(user_input, llm):
     TASK:
     Determine whether the "{user_input}" refers to an INDUSTRY, SECTOR, or MARKET.
     
-    If the input is an industry:
+    RULES:
+    - Accept industry names even if informal or simplified (e.g., "coffee plantation", "solar energy", "fashion retail")
+    - Only mark as INVALID if:
+      1. It's a single generic product with no industry context (e.g., just "coffee", "shoes", "water")
+      2. It's not business-related at all (e.g., "my dog", "happiness", "purple")
+    - Be permissive — if it could reasonably refer to an industry, mark it VALID
+    
+    RESPOND IN THIS EXACT FORMAT:
+    
+    If the input clearly refers to an industry (even informally):
     VALID
     
-    If the input is too broad or vague:
-    SUGGESTIONS: [3-5 specific industry alternatives the user might mean, comma-separated]
-    
-    If the input is not an industry at all:
+    If the input is too vague and needs clarification:
     INVALID - [one sentence explanation]
+    SUGGESTIONS: [3-5 specific industry alternatives, comma-separated]
     """
     
     classification_raw = llm.invoke(industry_check_prompt).content.strip()
