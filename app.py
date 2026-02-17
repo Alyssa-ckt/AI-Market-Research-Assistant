@@ -226,9 +226,7 @@ def generate_report(final_docs, user_input, llm):
         per_source_prompt = f"""
         You are a financial data extractor.
         TASK:
-        Scan the SOURCE CONTENT below and extract ALL explicit financial or market-scale figures.
-        
-        Include: market size, revenue, valuations, growth rates (CAGR), investment amounts, market spending.
+        Scan the SOURCE CONTENT below and extract ALL financial or market-scale figures, including market size, revenue, valuations, growth rates, investment amounts, market spending or similar.
         
         STRICT RULES:
         - Extract ONLY figures explicitly stated in the content below.
