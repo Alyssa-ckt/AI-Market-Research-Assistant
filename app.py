@@ -201,50 +201,34 @@ def generate_report(final_docs, user_input, llm):
     for i, doc in enumerate(final_docs, 1):
         title = doc.metadata.get('title')
         url = doc.metadata.get('source')
-        sources_info.append({"#": i, "Title": title, "URL": url})
+        # Extract financial figures per source
+        per_source_prompt = f"""
+        You are a financial data extractor.
+        TASK:
+        Scan the SOURCE CONTENT below and extract ALL explicit financial or market-scale figures.
         
-        context_text += (
-            f"[SOURCE {i}]\n"
-            f"TITLE: {title}\n"
-            f"URL: {url}\n"
-            f"CONTENT:\n{doc.page_content[:1500]}\n\n"
-        )
+        Include: market size, revenue, valuations, growth rates (CAGR), investment amounts, market spending.
+        
+        STRICT RULES:
+        - Extract ONLY figures explicitly stated in the content below.
+        - Do NOT calculate, estimate, or infer.
+        - Return ONLY a bullet list of figures. No preamble.
+        - If none found, return exactly: "None"
+        
+        SOURCE CONTENT:
+        {doc.page_content[:1500]}
+        """
+        try:
+            per_source_financials = llm.invoke(per_source_prompt).content.strip()
+        except Exception:
+            per_source_financials = "None"
 
-    financial_scan_prompt = ChatPromptTemplate.from_template("""
-    You are a financial data extractor.
-
-    TASK:
-    Scan the CONTEXT below and extract ALL explicit financial or market-scale figures.
-
-    Include:
-    - Market size (global or regional)
-    - Revenue figures
-    - Market valuation
-    - Growth rates (CAGR, annual growth)
-    - Investment amounts
-    - Market capitalization (if industry-relevant)
-    - Market spending
-
-    STRICT RULES:
-    - Extract ONLY figures explicitly stated in the CONTEXT.
-    - Do NOT calculate, estimate, or infer.
-    - For each figure, include the citation in this format:
-      [SOURCE X](URL)
-    - If no financial figures are found, return:
-      "No explicit financial figures found in sources."
-
-    FORMAT:
-    Bullet list.
-
-    CONTEXT:
-    {context}
-    """)
-
-    financial_chain = financial_scan_prompt | llm
-
-    financial_output = financial_chain.invoke({
-        "context": context_text
-    })
+        sources_info.append({
+            "#": i,
+            "Title": title,
+            "URL": url,
+            "Financial Figures": per_source_financials
+        })
 
     # Combined financial summary for the report prompt
     financial_text = "\n\n".join([
