@@ -343,8 +343,12 @@ def generate_report(final_docs, user_input, llm):
     return report.content, sources_info, financial_text
 
 # Streamlit UI
-st.title("AI Market Research Assistant")
-st.markdown("Hi, I am here to help with your industry research, what would you like to know? Just tell me anything.")
+# Logo + Title
+import os
+if os.path.exists("ai logo.png"):
+    st.image("ai logo.png", width=100)
+st.title("📊 AI Market Research Assistant")
+st.markdown("Hi, I am here to help with your industry research. Just enter an industry below to get started!")
 
 # Sidebar
 with st.sidebar:
