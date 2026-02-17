@@ -39,12 +39,12 @@ def validate_industry(user_input, llm):
     industry_check_prompt = f"""
     You are an input validator.
     TASK:
-    Determine whether the "{user_input}" refers to an INDUSTRY, SECTOR, or MARKET.
+    Determine whether the "{user_input}" refers to a BUSINESS INDUSTRY, SECTOR, or MARKET.
     
     RULES:
-    - Accept industry names even if informal or simplified (e.g., "coffee plantation", "solar energy", "fashion retail")
+    - Accept industry names even if informal or simplified
     - Only mark as INVALID if:
-      1. It's a single generic product with no industry context (e.g., just "coffee", "shoes", "water")
+      1. It's a single generic product with no industry context
       2. It's not business-related at all (e.g., "my dog", "happiness", "purple")
     - Be permissive — if it could reasonably refer to an industry, mark it VALID
     
