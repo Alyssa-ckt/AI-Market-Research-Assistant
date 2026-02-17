@@ -422,7 +422,7 @@ if st.button("Generate Report", type="primary"):
         st.error("Please enter a valid industry name (at least 3 characters)")
     else:
         try:
-            llm = get_llm(api_key)
+            llm = get_llm(api_key, provider, model)
             
             # Progress tracking
             progress_bar = st.progress(0)
