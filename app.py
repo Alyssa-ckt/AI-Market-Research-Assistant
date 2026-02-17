@@ -212,7 +212,11 @@ def generate_report(final_docs, user_input, llm):
         STRICT RULES:
         - Extract ONLY figures explicitly stated in the content below.
         - Do NOT calculate, estimate, or infer.
-        - Return ONLY a bullet list of figures. No preamble.
+        - Every bullet MUST follow this exact format:
+          • [figure] — [what it refers to, in plain English]
+          Example: • US$1.3 billion — Sri Lanka tea industry export revenue in 2021
+          Example: • 8.5% CAGR — projected annual growth rate of the global tea market
+        - Do NOT return bare numbers without context.
         - If none found, return exactly: "None"
         
         SOURCE CONTENT:
