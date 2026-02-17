@@ -105,7 +105,7 @@ def generate_queries(user_input, llm):
 
 def retrieve_documents(queries):
     """Retrieve documents from Wikipedia"""
-    retriever = WikipediaRetriever(load_max_docs=20, lang="en")
+    retriever = WikipediaRetriever(load_max_docs=12, lang="en")
     
     all_docs = []
     for q in queries:
