@@ -37,16 +37,16 @@ def get_llm(api_key, provider, model):
 def validate_industry(user_input, llm):
     """Validate if the input is a valid industry"""
     industry_check_prompt = f"""
-You are an input validator.
-
-TASK:
-Determine whether the "{user_input}" refers to a BUSINESS INDUSTRY, SECTOR, or MARKET.
-
-Respond with EXACTLY one word:
-VALID or INVALID
-
-Then give a one sentence reason if it is INVALID
-"""
+    You are an input validator.
+    TASK:
+    Determine whether the "{user_input}" refers to a BUSINESS INDUSTRY, SECTOR, or MARKET.
+    
+    Respond with EXACTLY one word:
+    VALID or INVALID
+    
+    Then give a one sentence reason if it is INVALID
+    """
+    
     classification_raw = llm.invoke(industry_check_prompt).content.strip()
     classification = classification_raw.split()[0].upper()
     
@@ -174,7 +174,7 @@ def filter_documents(raw_docs, user_input, llm):
         f"{user_input} market"
         ]
 
-            # Search each broad query and add results
+        # Search each broad query and add results
         for q in broad_queries:
             docs = retriever.invoke(q)
             for doc in docs:
@@ -183,16 +183,13 @@ def filter_documents(raw_docs, user_input, llm):
                 if title not in [d.metadata["title"] for d in final_docs]:
                     if user_input.lower() in title.lower():  # strict relevance
                         final_docs.append(doc)
-
-    # Cap at 5 sources
+                        
+    final_docs = final_docs[:5]
 
     if not final_docs:
-        print("\n[!] DATA GAP DETECTED")
-        print(f"I couldn't find specific business market data for '{user_input}' on Wikipedia.")
-        print("Please provide more details (e.g., 'Automotive manufacturing' instead of just 'Cars') or try a different sector.")
-        return # This stops the function immediately so no report is generated
+        return [] # This stops the function immediately so no report is generated
 
-    return final_docs[:5]
+    return final_docs
 
 
 
@@ -250,9 +247,6 @@ def generate_report(final_docs, user_input, llm):
     })
 
     financial_text = financial_output.content.strip()
-
-    print("\n--------------- FINANCIAL FIGURES DETECTED ---------------")
-    print(financial_text)
     
     report_prompt = ChatPromptTemplate.from_template("""
     ROLE:
@@ -339,7 +333,7 @@ def generate_report(final_docs, user_input, llm):
         "financials": financial_text
         })
     
-    return report.content, sources_info
+    return report.content, sources_info, financial_text
 
 # Streamlit UI
 st.title("AI Market Research Assistant")
@@ -396,7 +390,7 @@ with st.sidebar:
     
     **Powered by:**
     - LangChain
-    - Groq (Llama 3.3 70B)
+    - Groq/OpenAI
     - Wikipedia API
     """)
     
@@ -417,8 +411,8 @@ user_input = st.text_input(
 
 if st.button("Generate Report", type="primary"):
     if not api_key:
-        st.error("⚠️ Please enter your Groq API key in the sidebar first!")
-        st.info("Get a free API key at https://console.groq.com")
+        st.error(f"⚠️ Please enter your {provider} API key in the sidebar first!")
+        st.info(f"Get your API key at {api_url}")
         st.stop()
         
     if not user_input or len(user_input) < 3:
