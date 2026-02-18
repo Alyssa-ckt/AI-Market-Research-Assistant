@@ -21,7 +21,7 @@ def get_llm(api_key, provider, model):
         return ChatGroq(
             model_name=model,
             temperature=0.2,
-            max_tokens=1200,
+            max_tokens=3000,
             max_retries=2,
             api_key=api_key
         )
