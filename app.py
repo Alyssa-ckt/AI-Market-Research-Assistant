@@ -289,7 +289,7 @@ def generate_report(final_docs, user_input, llm):
     - Prioritise financial scale, capital intensity, and economic impact when available.
 
     FORMATTING RULES (CRITICAL):
-    - Use ## for each section heading (e.g. ## 1. Industry Overview & Market Value)
+    - Use ### for each section heading (e.g. ### 1. Industry Overview & Market Value)
     - Leave a blank line between the heading and the paragraph text
     - For bullet point lists, put each bullet on its own line with a blank line between bullets
     - For the SWOT section, use bold labels: **Strengths**, **Weaknesses**, **Opportunities**, **Threats**
