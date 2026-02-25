@@ -44,7 +44,7 @@ streamlit run app.py
 4. Select your repository and `app.py`
 5. In **Advanced settings → Secrets**, add:
    ```toml
-   GROQ_API_KEY = "your-groq-api-key-here"
+   OPENAI_API_KEY = "your-openai-api-key-here"
    ```
 6. Click "Deploy"
 
