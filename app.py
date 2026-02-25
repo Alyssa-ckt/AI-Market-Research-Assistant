@@ -281,7 +281,7 @@ def generate_report(final_docs, user_input, llm):
     - Do NOT include assumptions, extrapolations, or forward-looking estimates unless directly supported by the sources.
     - Do NOT generalize about market size if exact figures are available.
     - Avoid generic business statements that could apply to most industries.
-    - You SHOULD incorporate the financial figures listed in FINANCIAL FIGURES only if appropriate and accurately.
+    - You SHOULD incorporate the financial figures listed in FINANCIAL FIGURES only if appropriate and accurately in appropriate fonts.
 
     WRITING STYLE:
     - Professional, neutral, and analytical.
