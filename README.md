@@ -35,7 +35,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-4. Enter your Groq API key in the sidebar when the app opens
+4. Enter your OpenAI API key in the sidebar when the app opens
 ### Streamlit Community Cloud
 
 1. Push the code to GitHub
