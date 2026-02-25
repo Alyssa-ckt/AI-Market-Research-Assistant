@@ -1,4 +1,13 @@
 import streamlit as st
+# Hide Streamlit branding and user info
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 from langchain_community.retrievers import WikipediaRetriever
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
