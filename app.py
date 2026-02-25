@@ -376,7 +376,7 @@ with st.sidebar:
     # Provider Selection
     provider = st.selectbox(
         "AI Provider",
-        ["Groq", "OpenAI"],
+        ["OpenAI"],
         help="Choose your AI provider"
     )
     
@@ -420,7 +420,7 @@ with st.sidebar:
     
     **Powered by:**
     - LangChain
-    - Groq/OpenAI
+    - OpenAI
     - Wikipedia API
     """)
     
