@@ -14,7 +14,7 @@ Generate comprehensive industry reports powered by AI and Wikipedia data.
 ## Prerequisites
 
 - Python 3.8+
-- Groq API key (get one free at [console.groq.com](https://console.groq.com))
+- OpenAI API key (get one free at [console.groq.com](https://console.groq.com))
 
 ## Deployment
 ### Local Installation
@@ -73,7 +73,7 @@ streamlit run app.py
 ## Tech Stack
 
 - **Frontend**: Streamlit
-- **LLM**: Groq (Llama 3.3 70B)
+- **LLM**: OpenAI (gpt 4-o)
 - **Framework**: LangChain
 - **Data Source**: Wikipedia API
 
