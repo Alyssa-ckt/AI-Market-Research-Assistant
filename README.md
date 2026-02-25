@@ -81,7 +81,7 @@ streamlit run app.py
 
 **"Invalid API key" or authentication errors**
 - Make sure you copied the entire API key correctly
-- Check that your API key is active in the Groq console
+- Check that your API key is active in the OpenAI console
 
 **"No Wikipedia articles found"**
 - Try being more specific with your industry name
@@ -89,8 +89,9 @@ streamlit run app.py
 - Example: "Automotive Manufacturing" instead of "Cars"
 
 **Rate limits**
-- Groq offers generous free tier limits
-- If you hit limits, wait a few minutes or upgrade your plan
+- Pay-as-you-go model with tier-based rate limits
+- GPT-4o costs ~$0.005-0.015 per report (depending on context length)
+- Please monitor your usage to avoid unexpected charges
 
 ## License
 
